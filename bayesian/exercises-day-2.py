@@ -143,7 +143,7 @@ for n in sample_size:
     figure_plot = figure_plot + 1
 # --------------------------------------------------------------------------------------------
 
-def resultados_bayes(A_exitos, A_fracasos, B_exitos, B_fracasos, figure_plot):
+def resultados_bayes(A_exitos, A_fracasos, B_exitos, B_fracasos, figure_plot, rnd_ =2):
     beta_distribution_A = beta(A_exitos, A_fracasos)
     beta_distribution_B = beta(B_exitos, B_fracasos)
 
@@ -189,8 +189,8 @@ def resultados_bayes(A_exitos, A_fracasos, B_exitos, B_fracasos, figure_plot):
     plt.axvline(x=B_confidence_intervals['upper_hdi'], color='orange', alpha=0.35)
     plt.subplots_adjust(left=0.1, right=0.95, top=0.85, bottom=0.1)
     msg1 = f'Sample size A: {nA}, Sample size B: {nB}.'
-    msg2 = f'Estimated success rate A: {round(100*A_posterior_parameters["simulation_mean"],2)}+/-{round(100*A_posterior_parameters["simulation_std"],2)}%'
-    msg3 = f'Estimated success rate B: {round(100*B_posterior_parameters["simulation_mean"],2)}+/-{round(100*B_posterior_parameters["simulation_std"],2)}%'
+    msg2 = f'Estimated success rate A: {round(100*A_posterior_parameters["simulation_mean"],rnd_)}+/-{round(100*A_posterior_parameters["simulation_std"],rnd_)}%'
+    msg3 = f'Estimated success rate B: {round(100*B_posterior_parameters["simulation_mean"],rnd_)}+/-{round(100*B_posterior_parameters["simulation_std"],rnd_)}%'
     plt.title(f'{msg1}\n{msg2}\n{msg3}', loc='left')
     plt.xlabel('Click rate')
     plt.ylabel('Density')
@@ -206,8 +206,8 @@ def resultados_bayes(A_exitos, A_fracasos, B_exitos, B_fracasos, figure_plot):
     plt.axvline(x=delta_rel_confidence_intervals['upper_hdi'], color='royalblue', alpha=0.35)
     plt.subplots_adjust(left=0.1, right=0.95, top=0.85, bottom=0.1)
     msg1 = f'Sample size A: {nA}, Sample size B: {nB}.'
-    msg2 = f'Estimated difference of B/A: {round(delta_rel_posterior_parameters["simulation_mean"], 2)}+/-{round(delta_rel_posterior_parameters["simulation_std"], 2)}%'
-    msg3 = f'Probability that B is better than A: {round(100 * probabilidad_B_mejor_que_A, 2)}%'
+    msg2 = f'Estimated difference of B/A: {round(delta_rel_posterior_parameters["simulation_mean"], rnd_)}+/-{round(delta_rel_posterior_parameters["simulation_std"], rnd_)}%'
+    msg3 = f'Probability that B is better than A: {round(100 * probabilidad_B_mejor_que_A, rnd_)}%'
     plt.title(f'{msg1}\n{msg2}\n{msg3}', loc='left')
     plt.xlabel('Click rate de B / Click rate de A')
     plt.ylabel('Density')
@@ -237,3 +237,46 @@ B_fracasos = tamano_muestra_b - B_exitos
 
 resultados_bayes(A_exitos, A_fracasos, B_exitos, B_fracasos, figure_plot)
 
+# --------------------------------------------------------------------------------------------
+
+# Rapidez
+# --------------------------------------------------------
+n = 7_000_000
+nA, nB = np.random.rand(2, n)
+
+# Simulamos resultados de nuestro experimento: tener unas tasas de exito de 4.99 y 5.17
+tasa_exito_A = 0.02
+tasa_exito_B = 0.0203
+
+A_exitos = sum(nA < tasa_exito_A)
+A_fracasos = n - A_exitos
+B_exitos = sum(nB < tasa_exito_B)
+B_fracasos = n - B_exitos
+
+resultados_bayes(A_exitos, A_fracasos, B_exitos, B_fracasos, figure_plot, rnd_=4)
+
+# Correcciones de multiple metricas
+# --------------------------------------------------------
+n = 50_000
+nA, nB = np.random.rand(2, n)
+
+# Simulamos resultados de nuestro experimento: tener unas tasas de exito de 4.99 y 5.17
+tasa_exito_A = 0.11
+tasa_exito_B = 0.12
+
+A_exitos = sum(nA < tasa_exito_A)
+A_fracasos = n - A_exitos
+B_exitos = sum(nB < tasa_exito_B)
+B_fracasos = n - B_exitos
+
+resultados_bayes(A_exitos, A_fracasos, B_exitos, B_fracasos, figure_plot, rnd_=4)
+
+tasa_exito_A = 0.05
+tasa_exito_B = 0.051
+
+A_exitos = sum(nA < tasa_exito_A)
+A_fracasos = n - A_exitos
+B_exitos = sum(nB < tasa_exito_B)
+B_fracasos = n - B_exitos
+
+resultados_bayes(A_exitos, A_fracasos, B_exitos, B_fracasos, figure_plot, rnd_=4)
